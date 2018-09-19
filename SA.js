@@ -16,18 +16,19 @@ function generate(){ //fungsi simulated anealing.
 
 	let X1curr = 0; //current state
 	let X2curr = 0; 
-	let t = 100; //temprature
+	let t = 10000; //temprature
 	const g = -9; //nilai negatif
 	let e = Math.E;
 
 	let X1best = X1curr; //simpan best
 	let X2best = X2curr;
 	let Ebest = soal(X1best, X2best); //simpan nilai terbaik
+	let Enew = 0;
 
 	while(t!= 0){ //Looping Simulated anealing
 
 
-		if((X1curr  < 9 && X2curr < 9) && (X1curr > g && X2curr > g)){ //in range
+		if((X1curr  < 9 && X2curr < 9) && (X1curr > g && X2curr > g)){ //in range secara umum
 
 			if(opr == "plus"){ //Jika hasil operasi untuk menggerakkan X1 & X2 current adalah tambah 
 				let Ecurr = soal(X1curr, X2curr); //simpan current energi
@@ -39,7 +40,7 @@ function generate(){ //fungsi simulated anealing.
 				let X1new = X1curr; //simpan nilai terbaru
 				let X2new = X2curr;
 
-				let Enew = soal(X1new, X2new);
+				 Enew = soal(X1new, X2new);
 
 				let deltaE = Enew - Ecurr; //delta E
 
@@ -50,6 +51,7 @@ function generate(){ //fungsi simulated anealing.
 						 	X1best = X1new;
 						 	X2best = X2new;
 						 	Ebest = Enew;
+						 
 						 }else{
 						 	let pangkat = -(deltaE/t);
 						 	let P = Math.pow(e,pangkat);
@@ -77,7 +79,7 @@ function generate(){ //fungsi simulated anealing.
 				let X1new = X1curr; //simpan nilai terbaru
 				let X2new = X2curr;
 
-				let Enew = soal(X1new, X2new);
+				Enew = soal(X1new, X2new);
 
 				let deltaE = Enew - Ecurr; //Delta E
 
@@ -105,12 +107,72 @@ function generate(){ //fungsi simulated anealing.
 
 			}
 
+		}else if( (X1curr<-9 && X2curr<9) ){ //jika x1 sudah mencapai batas operasi namun x2 belum
+			let Ecurr = soal(X1curr, X2curr); //maksudnya batas operasi jika x1 + random > 10/-10
+			X2curr = X2curr + Math.random();
+				let X1new = X1curr; //simpan nilai terbaru
+				let X2new = X2curr;
+
+				Enew = soal(X1new, X2new);
+
+				let deltaE = Enew - Ecurr; //Delta E
+
+				if(deltaE < 0) {
+						X1curr = X1new;
+						X2curr = X2new;
+						 if(Enew < Ebest){
+						 	X1best = X1new;
+						 	X2best = X2new;
+						 	Ebest = Enew;
+						 }else{
+						 	let pangkat = -(deltaE/t);
+						 	let P = Math.pow(e,pangkat);
+
+						 	let R = Math.random;
+						 		if(R<P){
+						 			X1curr = X1new;
+						 			X2curr = X2new;
+						 		}
+
+						 }
+
+					}
+					
+		}else if(X2curr>9 && X1curr>-9){ //jika x1 belum mencapai batas operasi namun x2 sudah
+				let Ecurr = soal(X1curr, X2curr); 
+				X1curr = X1curr - Math.random();
+					let X1new = X1curr; //simpan nilai terbaru
+					let X2new = X2curr;
+
+					Enew = soal(X1new, X2new);
+
+					let deltaE = Enew - Ecurr; //Delta E
+
+						if(deltaE < 0) {
+								X1curr = X1new;
+								X2curr = X2new;
+								 if(Enew < Ebest){
+								 	X1best = X1new;
+								 	X2best = X2new;
+								 	Ebest = Enew;
+								 }else{
+								 	let pangkat = -(deltaE/t);
+								 	let P = Math.pow(e,pangkat);
+
+								 	let R = Math.random;
+								 		if(R<P){
+								 			X1curr = X1new;
+								 			X2curr = X2new;
+								 		}
+
+								 }
+
+							}
 		}
 
 		//Akhir loop
 		t = t-1;
-	}
-	
+	}	
 	var energi = [X1curr, X2curr, Ebest];
 	return energi;
 	
@@ -156,6 +218,6 @@ function soal(x1,x2){ //fungsi mengenarate soal ke bahasa pemrograman.
 	var goal = generate();
 		alert("X1 = "+ goal[0] +"\n"
 		+"X2 = "+ goal[1] +"\n"
-	 	+"Hasil = "+ goal[2]);
-
-
+	 	+"Hasil = "+ goal[2]
+	 	
+		);
